@@ -1,9 +1,8 @@
 const AddThread = require('../../Domains/threads/entities/AddThread');
 
 class AddThreadUseCase {
-  constructor({ threadRepository, passwordHash }) {
+  constructor({ threadRepository }) {
     this._threadRepository = threadRepository;
-    this._passwordHash = passwordHash;
   }
 
   async execute(useCasePayload) {
