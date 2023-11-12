@@ -27,9 +27,9 @@ describe('AddComment entities', () => {
   it('should create AddComment entities correctly', () => {
     // Arrange
     const payload = {
-      content: 'comment-content-text',
-      owner: 'user-123',
       threadId: 'thread-123',
+      owner: 'user-123',
+      content: 'comment-content-text',
     };
 
     // Action
@@ -37,8 +37,8 @@ describe('AddComment entities', () => {
 
     // Assert
     expect(addComment).toBeInstanceOf(AddComment);
-    expect(addComment.content).toEqual(payload.content);
-    expect(addComment.owner).toEqual(payload.owner);
     expect(addComment.threadId).toEqual(payload.threadId);
+    expect(addComment.owner).toEqual(payload.owner);
+    expect(addComment.content).toEqual(payload.content);
   });
 });
