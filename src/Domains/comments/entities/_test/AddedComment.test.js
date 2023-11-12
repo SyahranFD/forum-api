@@ -28,8 +28,8 @@ describe('AddedComment entities', () => {
     // Arrange
     const payload = {
       id: 'comment-123',
-      content: 'comment-content-text',
       owner: 'user-123',
+      content: 'comment-content-text',
     };
 
     // Action
@@ -38,7 +38,7 @@ describe('AddedComment entities', () => {
     // Assert
     expect(addedComment).toBeInstanceOf(AddedComment);
     expect(addedComment.id).toEqual(payload.id);
-    expect(addedComment.content).toEqual(payload.content);
     expect(addedComment.owner).toEqual(payload.owner);
+    expect(addedComment.content).toEqual(payload.content);
   });
 });
