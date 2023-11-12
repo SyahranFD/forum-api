@@ -5,7 +5,7 @@ describe('AddedThread entities', () => {
     // Arrange
     const payload = {
       id: 'thread-123',
-      title: 'thread title',
+      title: 'thread title text',
     };
 
     // Action & Assert
@@ -15,9 +15,9 @@ describe('AddedThread entities', () => {
   it('should throw error when payload not meet data type specification', () => {
     // Arrange
     const payload = {
-      id: 123,
-      title: 123,
-      owner: 123,
+      id: 'string',
+      title: 'string',
+      owner: ['not string'],
     };
 
     // Action & Assert
@@ -28,8 +28,8 @@ describe('AddedThread entities', () => {
     // Arrange
     const payload = {
       id: 'thread-123',
-      title: 'thread title',
-      owner: 'user-123',
+      title: 'thread title text',
+      owner: 'user 123',
     };
 
     // Action

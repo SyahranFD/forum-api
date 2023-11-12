@@ -27,8 +27,8 @@ describe('ThreadRepositoryPostgres', () => {
 
       const addThread = new AddThread({
         owner: 'user-123',
-        title: 'thread title',
-        body: 'thread body',
+        title: 'thread title text',
+        body: 'thread body text',
       });
       const fakeIdGenerator = () => '123'; // stub!
       const threadRepositoryPostgres = new ThreadRepositoryPostgres(pool, fakeIdGenerator);
@@ -39,7 +39,7 @@ describe('ThreadRepositoryPostgres', () => {
       // Assert
       expect(addedThread).toStrictEqual(new AddedThread({
         id: 'thread-123',
-        title: 'thread title',
+        title: 'thread title text',
         owner: 'user-123',
       }));
     });

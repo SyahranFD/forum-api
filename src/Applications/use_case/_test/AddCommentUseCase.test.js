@@ -20,13 +20,13 @@ describe('AddCommentUseCase', () => {
     const useCasePayload = {
       threadId: useCaseParams.threadId,
       owner: useCaseAuthCredential.owner,
-      content: 'comment-content-text',
+      content: 'comment content text',
     };
 
     const mockAddedComment = new AddedComment({
       id: 'comment-123',
       owner: useCaseAuthCredential.owner,
-      content: 'comment-content-text',
+      content: 'comment content text',
     });
 
     /** creating dependency of use case */
@@ -48,7 +48,7 @@ describe('AddCommentUseCase', () => {
     expect(addedComment).toStrictEqual(new AddedComment({
       id: 'comment-123',
       owner: useCaseAuthCredential.owner,
-      content: 'comment-content-text',
+      content: 'comment content text',
     }));
 
     expect(mockCommentRepository.addComment).toBeCalledWith(new AddComment({

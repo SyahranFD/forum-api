@@ -15,8 +15,8 @@ describe('AddThreadUseCase', () => {
 
     const useCasePayload = {
       owner: useCaseAuthCredential.owner,
-      title: 'thread title',
-      body: 'thread body',
+      title: 'thread title text',
+      body: 'thread body text',
     };
 
     const mockAddedThread = new AddedThread({
