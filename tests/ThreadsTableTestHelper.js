@@ -6,7 +6,7 @@ const ThreadsTableTestHelper = {
     id = 'thread-123', owner = 'user-123', title = 'thread title', body = 'thread body',
   }) {
     const query = {
-      text: 'INSERT INTO threads VALUES($1, $2, $3, $4)',
+      text: 'INSERT INTO threads (id, owner, title, body) VALUES($1, $2, $3, $4)',
       values: [id, owner, title, body],
     };
 
