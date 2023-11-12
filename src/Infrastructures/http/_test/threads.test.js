@@ -49,8 +49,8 @@ describe('/threads endpoint', () => {
     it('should response 201 and persisted thread', async () => {
       // Arrange
       const requestPayload = {
-        title: 'thread-title-text',
-        body: 'thread-body-text',
+        title: 'thread title text',
+        body: 'thread body text',
       };
 
       const server = await createServer(container);
@@ -75,7 +75,7 @@ describe('/threads endpoint', () => {
     it('should response 400 when request payload not contain needed property', async () => {
       // Arrange
       const requestPayload = {
-        body: 'thread-body-text',
+        body: 'thread body text',
       };
       const server = await createServer(container);
 
