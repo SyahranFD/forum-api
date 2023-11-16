@@ -5,7 +5,7 @@ describe('DetailComment entities', () => {
     // Arrange
     const payload = {
       id: 'comment-123',
-      username: 'user-123',
+      username: 'rafa',
     };
 
     // Action & Assert
@@ -19,6 +19,8 @@ describe('DetailComment entities', () => {
       username: 'string',
       date: 'string',
       content: ['not string'],
+      isDeleted: false,
+      replies: [],
     };
 
     // Action & Assert
@@ -29,9 +31,11 @@ describe('DetailComment entities', () => {
     // Arrange
     const payload = {
       id: 'comment-123',
-      username: 'user-123',
+      username: 'rafa',
       date: '2020-11-11',
       content: 'comment content text',
+      isDeleted: false,
+      replies: [],
     };
 
     // Action
@@ -43,5 +47,6 @@ describe('DetailComment entities', () => {
     expect(detailComment.username).toEqual(payload.username);
     expect(detailComment.date).toEqual(payload.date);
     expect(detailComment.content).toEqual(payload.content);
+    expect(detailComment.replies).toEqual(payload.replies);
   });
 });
