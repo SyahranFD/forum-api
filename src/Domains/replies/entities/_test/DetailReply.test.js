@@ -4,8 +4,8 @@ describe('DetailReply entities', () => {
   it('should throw error when payload not contain needed property', () => {
     // Arrange
     const payload = {
-      id: 'comment-123',
-      username: 'user-123',
+      id: 'reply-123',
+      content: 'reply content text',
     };
 
     // Action & Assert
@@ -19,6 +19,8 @@ describe('DetailReply entities', () => {
       content: 'string',
       date: 'string',
       username: ['not string'],
+      isDeleted: false,
+      commentId: 'comment-123',
     };
 
     // Action & Assert
@@ -31,7 +33,9 @@ describe('DetailReply entities', () => {
       id: 'reply-123',
       content: 'reply content text',
       date: '2020-11-11',
-      username: 'user-123',
+      username: 'rafa',
+      isDeleted: false,
+      commentId: 'comment-123',
     };
 
     // Action
@@ -43,5 +47,7 @@ describe('DetailReply entities', () => {
     expect(detailReply.content).toEqual(payload.content);
     expect(detailReply.date).toEqual(payload.date);
     expect(detailReply.username).toEqual(payload.username);
+    expect(detailReply.isDeleted).toEqual(payload.isDeleted);
+    expect(detailReply.commentId).toEqual(payload.commentId);
   });
 });

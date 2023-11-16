@@ -20,7 +20,8 @@ describe('DetailThread entities', () => {
       title: 'string',
       body: 'string',
       date: 'string',
-      username: ['not string'],
+      username: 'not string',
+      comments: 'string',
     };
 
     // Action & Assert
@@ -35,6 +36,7 @@ describe('DetailThread entities', () => {
       body: 'thread title body',
       date: '2020-11-11',
       username: 'user-123',
+      comments: [],
     };
 
     // Action
@@ -47,5 +49,6 @@ describe('DetailThread entities', () => {
     expect(detailThread.body).toEqual(payload.body);
     expect(detailThread.date).toEqual(payload.date);
     expect(detailThread.username).toEqual(payload.username);
+    expect(detailThread.comments).toEqual(payload.comments);
   });
 });
