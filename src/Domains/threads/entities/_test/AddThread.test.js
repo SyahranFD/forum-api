@@ -24,7 +24,7 @@ describe('AddThread entities', () => {
     expect(() => new AddThread(payload)).toThrowError('ADD_THREAD.NOT_MEET_DATA_TYPE_SPECIFICATION');
   });
 
-  it('should create NewThread entities correctly', () => {
+  it('should create AddThread entities correctly', () => {
     // Arrange
     const payload = {
       owner: 'user-123',
