@@ -10,7 +10,7 @@ const pool = require('../../database/postgres/pool');
 const ReplyRepositoryPostgres = require('../ReplyRepositoryPostgres');
 
 describe('CommentRepositoryPostgres', () => {
-  beforeAll(async () => {
+  beforeEach(async () => {
     await UsersTableTestHelper.addUser({
       id: 'user-123',
       username: 'dicoding',
@@ -32,12 +32,12 @@ describe('CommentRepositoryPostgres', () => {
 
   afterEach(async () => {
     await RepliesTableTestHelper.cleanTable();
-  });
-
-  afterAll(async () => {
     await CommentsTableTestHelper.cleanTable();
     await UsersTableTestHelper.cleanTable();
     await ThreadsTableTestHelper.cleanTable();
+  });
+
+  afterAll(async () => {
     await pool.end();
   });
 
@@ -73,6 +73,21 @@ describe('CommentRepositoryPostgres', () => {
       await expect(replyRepositoryPostgres.verifyReplyOwner('reply-???', 'user-123')).rejects.toThrowError(NotFoundError);
     });
 
+    it('should throw AuthorizationError when reply is not owned by user', async () => {
+      // Arrange
+      await RepliesTableTestHelper.addReply({
+        id: 'reply-123',
+        commentId: 'comment-123',
+        owner: 'user-123',
+        content: 'reply content text',
+      });
+
+      const replyRepositoryPostgres = new ReplyRepositoryPostgres(pool, {});
+
+      // Assert
+      await expect(replyRepositoryPostgres.verifyReplyOwner('reply-123', 'user-222')).rejects.toThrowError(AuthorizationError);
+    });
+
     it('should delete reply correctly', async () => {
       // Arrange
       await RepliesTableTestHelper.addReply({
@@ -90,21 +105,6 @@ describe('CommentRepositoryPostgres', () => {
 
       // Assert
       expect(reply[0].is_deleted).toEqual(true);
-    });
-
-    it('should throw AuthorizationError when reply is not owned by user', async () => {
-      // Arrange
-      await RepliesTableTestHelper.addReply({
-        id: 'reply-123',
-        commentId: 'comment-123',
-        owner: 'user-123',
-        content: 'reply content text',
-      });
-
-      const replyRepositoryPostgres = new ReplyRepositoryPostgres(pool, {});
-
-      // Assert
-      await expect(replyRepositoryPostgres.verifyReplyOwner('reply-123', 'user-222')).rejects.toThrowError(AuthorizationError);
     });
   });
 });

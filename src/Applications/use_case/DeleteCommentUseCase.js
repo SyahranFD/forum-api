@@ -4,7 +4,8 @@ class DeleteCommentUseCase {
   }
 
   async execute(useCasePayload) {
-    return this._commentRepository.deleteCommentById(useCasePayload.id);
+    await this._commentRepository.verifyCommentOwner(useCasePayload.id, useCasePayload.owner);
+    await this._commentRepository.deleteCommentById(useCasePayload.id);
   }
 }
 

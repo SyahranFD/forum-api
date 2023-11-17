@@ -203,5 +203,67 @@ describe('/comments endpoint', () => {
       expect(response.statusCode).toEqual(200);
       expect(responseJson.status).toEqual('success');
     });
+    it('should response 403 when user is not the owner of comment', async () => {
+      // Arrange
+      const requestPayloadUserSecond = {
+        username: 'fadhil',
+        password: 'fadhilpassword',
+        fullname: 'Fadhil Dafanindra',
+      };
+
+      const requestPayloadAuthenticationSecond = {
+        username: 'fadhil',
+        password: 'fadhilpassword',
+      };
+
+      const requestPayloadComment = {
+        content: 'comment content text',
+      };
+
+      const server = await createServer(container);
+
+      // Action
+      // add user
+      await server.inject({
+        method: 'POST',
+        url: '/users',
+        payload: requestPayloadUserSecond,
+      });
+
+      // add accessToken
+      const responseAuthenticationSecond = await server.inject({
+        method: 'POST',
+        url: '/authentications',
+        payload: requestPayloadAuthenticationSecond,
+      });
+
+      const responseJsonAuthenticationSecond = JSON.parse(responseAuthenticationSecond.payload);
+      const accessTokenSecond = responseJsonAuthenticationSecond.data.accessToken;
+
+      const responseComment = await server.inject({
+        method: 'POST',
+        url: `/threads/${threadId}/comments`,
+        payload: requestPayloadComment,
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      const responseJsonComment = JSON.parse(responseComment.payload);
+      const commentId = responseJsonComment.data.addedComment.id;
+
+      const response = await server.inject({
+        method: 'DELETE',
+        url: `/threads/${threadId}/comments/${commentId}`,
+        headers: {
+          Authorization: `Bearer ${accessTokenSecond}`,
+        },
+      });
+
+      // Assert
+      const responseJson = JSON.parse(response.payload);
+      expect(response.statusCode).toEqual(403);
+      expect(responseJson.status).toEqual('fail');
+    });
   });
 });
