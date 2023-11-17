@@ -107,4 +107,52 @@ describe('CommentRepositoryPostgres', () => {
       expect(reply[0].is_deleted).toEqual(true);
     });
   });
+
+  describe('getReplyByThreadId function', () => {
+    it('should return replies by thread id correctly', async () => {
+      // Arrange
+      await RepliesTableTestHelper.addReply({
+        id: 'reply-111',
+        commentId: 'comment-123',
+        owner: 'user-123',
+        content: 'reply content text',
+      });
+
+      await RepliesTableTestHelper.addReply({
+        id: 'reply-222',
+        commentId: 'comment-123',
+        owner: 'user-123',
+        content: 'reply content text',
+      });
+
+      const replyRepositoryPostgres = new ReplyRepositoryPostgres(pool, {});
+
+      // Action
+      const replies = await replyRepositoryPostgres.getReplyByThreadId('thread-123');
+
+      // Assert
+      expect(replies).toEqual([
+        {
+          id: 'reply-111',
+          content: 'reply content text',
+          date: expect.anything(),
+          username: 'dicoding',
+        },
+        {
+          id: 'reply-222',
+          content: 'reply content text',
+          date: expect.anything(),
+          username: 'dicoding',
+        },
+      ]);
+    });
+
+    it('should throw NotFoundError when thread has no replies', async () => {
+      // Arrange
+      const replyRepositoryPostgres = new ReplyRepositoryPostgres(pool, {});
+
+      // Assert
+      await expect(replyRepositoryPostgres.getReplyByThreadId('thread-???')).rejects.toThrowError(NotFoundError);
+    });
+  });
 });
