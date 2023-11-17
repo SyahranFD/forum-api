@@ -51,6 +51,30 @@ class ReplyRepositoryPostgres extends ThreadRepository {
       throw new AuthorizationError('Anda tidak berhak mengakses reply ini');
     }
   }
+
+  async getReplyByThreadId(threadId) {
+    const query = {
+      text: `
+        SELECT replies.id, replies.content, replies.date, users.username, replies.is_deleted AS isDeleted
+        FROM replies
+        INNER JOIN comments ON replies.comment_id = comments.id
+        INNER JOIN users ON comments.owner = users.id
+        WHERE comments.thread_id = $1
+        ORDER BY replies.date ASC
+      `,
+      values: [threadId],
+    };
+
+    const { rows, rowCount } = await this._pool.query(query);
+
+    if (!rowCount) {
+      throw new NotFoundError('Comment tidak ditemukan');
+    }
+
+    const mappedRows = rows.map(({ isdeleted, ...detailReply }) => detailReply);
+
+    return mappedRows;
+  }
 }
 
 module.exports = ReplyRepositoryPostgres;
