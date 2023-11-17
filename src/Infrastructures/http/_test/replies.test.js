@@ -10,9 +10,17 @@ describe('/comments endpoint', () => {
   let accessToken;
   let responseJsonThread;
   let threadId;
+  let responseJsonComment;
+  let commentId;
 
   beforeEach(async () => {
     // Arrange
+    const requestPayloadUser = {
+      username: 'rafa',
+      password: 'rafapassword',
+      fullname: 'Rafa Syahran',
+    };
+
     const requestPayloadAuthentication = {
       username: 'rafa',
       password: 'rafapassword',
@@ -23,17 +31,17 @@ describe('/comments endpoint', () => {
       body: 'thread body text',
     };
 
+    const requestPayloadComment = {
+      content: 'comment content text',
+    };
+
     const server = await createServer(container);
 
     // add user
     await server.inject({
       method: 'POST',
       url: '/users',
-      payload: {
-        username: 'rafa',
-        password: 'rafapassword',
-        fullname: 'Rafa Syahran',
-      },
+      payload: requestPayloadUser,
     });
 
     // add accessToken
@@ -58,6 +66,19 @@ describe('/comments endpoint', () => {
 
     responseJsonThread = JSON.parse(responseThread.payload);
     threadId = responseJsonThread.data.addedThread.id;
+
+    // add comment
+    const responseComment = await server.inject({
+      method: 'POST',
+      url: `/threads/${threadId}/comments`,
+      payload: requestPayloadComment,
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    responseJsonComment = JSON.parse(responseComment.payload);
+    commentId = responseJsonComment.data.addedComment.id;
   });
 
   afterAll(async () => {
@@ -70,11 +91,11 @@ describe('/comments endpoint', () => {
     await CommentsTableTestHelper.cleanTable();
   });
 
-  describe('when POST /threads/{threadId}/comments', () => {
-    it('should response 201 and persisted comment', async () => {
+  describe('when POST /threads/{threadId}/comments/{commentId}/replies', () => {
+    it('should response 201 and persisted reply', async () => {
       // Arrange
       const requestPayload = {
-        content: 'comment content text',
+        content: 'reply content text',
       };
 
       const server = await createServer(container);
@@ -82,7 +103,7 @@ describe('/comments endpoint', () => {
       // Action
       const response = await server.inject({
         method: 'POST',
-        url: `/threads/${threadId}/comments`,
+        url: `/threads/${threadId}/comments/${commentId}/replies`,
         payload: requestPayload,
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -93,8 +114,8 @@ describe('/comments endpoint', () => {
       const responseJson = JSON.parse(response.payload);
       expect(response.statusCode).toEqual(201);
       expect(responseJson.status).toEqual('success');
-      expect(responseJson.data.addedComment).toBeDefined();
-      expect(responseJson.data.addedComment.id).toBeDefined();
+      expect(responseJson.data.addedReply).toBeDefined();
+      expect(responseJson.data.addedReply.id).toBeDefined();
     });
 
     // it('should response 404 when thread not found', async () => {
@@ -130,7 +151,7 @@ describe('/comments endpoint', () => {
       // Action
       const response = await server.inject({
         method: 'POST',
-        url: `/threads/${threadId}/comments`,
+        url: `/threads/${threadId}/comments/${commentId}/replies`,
         payload: requestPayload,
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -141,7 +162,7 @@ describe('/comments endpoint', () => {
       const responseJson = JSON.parse(response.payload);
       expect(response.statusCode).toEqual(400);
       expect(responseJson.status).toEqual('fail');
-      expect(responseJson.message).toEqual('tidak dapat membuat comment baru karena properti yang dibutuhkan tidak ada');
+      expect(responseJson.message).toEqual('tidak dapat membuat reply baru karena properti yang dibutuhkan tidak ada');
     });
 
     it('should response 400 when request payload not meet data type specification', async () => {
@@ -154,7 +175,7 @@ describe('/comments endpoint', () => {
       // Action
       const response = await server.inject({
         method: 'POST',
-        url: `/threads/${threadId}/comments`,
+        url: `/threads/${threadId}/comments/${commentId}/replies`,
         payload: requestPayload,
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -165,34 +186,35 @@ describe('/comments endpoint', () => {
       const responseJson = JSON.parse(response.payload);
       expect(response.statusCode).toEqual(400);
       expect(responseJson.status).toEqual('fail');
-      expect(responseJson.message).toEqual('tidak dapat membuat comment baru karena tipe data tidak sesuai');
+      expect(responseJson.message).toEqual('tidak dapat membuat reply baru karena tipe data tidak sesuai');
     });
   });
-  describe('when DELETE /threads/{threadId}/comments/{commentId}', () => {
-    it('should response 200 and persisted delete comment', async () => {
+
+  describe('when DELETE /threads/{threadId}/comments/{commentId}/replies/{replyId}', () => {
+    it('should response 200 and persisted delete reply', async () => {
       // Arrange
-      const requestPayloadComment = {
-        content: 'comment content text',
+      const requestPayloadReply = {
+        content: 'reply content text',
       };
 
       const server = await createServer(container);
 
       // Action
-      const responseComment = await server.inject({
+      const responseReply = await server.inject({
         method: 'POST',
-        url: `/threads/${threadId}/comments`,
-        payload: requestPayloadComment,
+        url: `/threads/${threadId}/comments/${commentId}/replies`,
+        payload: requestPayloadReply,
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
       });
 
-      const responseJsonComment = JSON.parse(responseComment.payload);
-      const commentId = responseJsonComment.data.addedComment.id;
+      const responseJsonReply = JSON.parse(responseReply.payload);
+      const replyId = responseJsonReply.data.addedReply.id;
 
       const response = await server.inject({
         method: 'DELETE',
-        url: `/threads/${threadId}/comments/${commentId}`,
+        url: `/threads/${threadId}/comments/${commentId}/replies/${replyId}`,
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
@@ -202,6 +224,67 @@ describe('/comments endpoint', () => {
       const responseJson = JSON.parse(response.payload);
       expect(response.statusCode).toEqual(200);
       expect(responseJson.status).toEqual('success');
+    });
+    it('should response 403 when user is not the owner of reply', async () => {
+      // Arrange
+      const requestPayloadUserSecond = {
+        username: 'fadhil',
+        password: 'fadhilpassword',
+        fullname: 'Fadhil Dafanindra',
+      };
+
+      const requestPayloadAuthenticationSecond = {
+        username: 'fadhil',
+        password: 'fadhilpassword',
+      };
+
+      const requestPayloadReply = {
+        content: 'reply content text',
+      };
+
+      const server = await createServer(container);
+
+      // Action
+      // add user
+      await server.inject({
+        method: 'POST',
+        url: '/users',
+        payload: requestPayloadUserSecond,
+      });
+
+      // add accessToken
+      const responseAuthenticationSecond = await server.inject({
+        method: 'POST',
+        url: '/authentications',
+        payload: requestPayloadAuthenticationSecond,
+      });
+
+      const responseJsonAuthenticationSecond = JSON.parse(responseAuthenticationSecond.payload);
+      const accessTokenSecond = responseJsonAuthenticationSecond.data.accessToken;
+
+      const responseReply = await server.inject({
+        method: 'POST',
+        url: `/threads/${threadId}/comments/${commentId}/replies`,
+        payload: requestPayloadReply,
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      const responseJsonReply = JSON.parse(responseReply.payload);
+      const replyId = responseJsonReply.data.addedReply.id;
+
+      const response = await server.inject({
+        method: 'DELETE',
+        url: `/threads/${threadId}/comments/${commentId}/replies/${replyId}`,
+        headers: {
+          Authorization: `Bearer ${accessTokenSecond}`,
+        },
+      });
+      // Assert
+      const responseJson = JSON.parse(response.payload);
+      expect(response.statusCode).toEqual(403);
+      expect(responseJson.status).toEqual('fail');
     });
   });
 });
