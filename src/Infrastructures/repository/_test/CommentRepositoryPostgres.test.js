@@ -1,6 +1,7 @@
 const CommentsTableTestHelper = require('../../../../tests/CommentsTableTestHelper');
 const ThreadsTableTestHelper = require('../../../../tests/ThreadsTableTestHelper');
 const UsersTableTestHelper = require('../../../../tests/UsersTableTestHelper');
+const AuthorizationError = require('../../../Commons/exceptions/AuthorizationError');
 const NotFoundError = require('../../../Commons/exceptions/NotFoundError');
 const AddComment = require('../../../Domains/comments/entities/AddComment');
 const AddedComment = require('../../../Domains/comments/entities/AddedComment');
@@ -65,9 +66,24 @@ describe('CommentRepositoryPostgres', () => {
       await expect(commentRepositoryPostgres.deleteCommentById('comment-???')).rejects.toThrowError(NotFoundError);
     });
 
+    it('should throw AuthorizationError when reply is not owned by user', async () => {
+      // Arrange
+      await CommentsTableTestHelper.addComment({
+        id: 'comment-123',
+        threadId: 'thread-123',
+        owner: 'user-123',
+        content: 'comment content text',
+      });
+
+      const commentRepositoryPostgres = new CommentRepositoryPostgres(pool, {});
+
+      // Assert
+      await expect(commentRepositoryPostgres.verifyCommentOwner('comment-123', 'user-222')).rejects.toThrowError(AuthorizationError);
+    });
+
     it('should delete comment correctly', async () => {
       // Arrange
-      CommentsTableTestHelper.addComment({
+      await CommentsTableTestHelper.addComment({
         id: 'comment-123',
         threadId: 'thread-123',
         owner: 'user-123',
