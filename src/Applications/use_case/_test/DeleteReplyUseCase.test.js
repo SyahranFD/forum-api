@@ -30,6 +30,8 @@ describe('DeleteReplyUseCase', () => {
     /** mocking needed function */
     mockReplyRepository.deleteReplyById = jest.fn()
       .mockImplementation(() => Promise.resolve());
+    mockReplyRepository.verifyReplyOwner = jest.fn()
+      .mockImplementation(() => Promise.resolve());
 
     /** creating use case instance */
     const deleteReplyUseCase = new DeleteReplyUseCase({
@@ -41,5 +43,7 @@ describe('DeleteReplyUseCase', () => {
 
     // Assert
     expect(mockReplyRepository.deleteReplyById).toBeCalledWith(useCasePayload.id);
+    expect(mockReplyRepository.verifyReplyOwner)
+      .toBeCalledWith(useCasePayload.id, useCasePayload.owner);
   });
 });

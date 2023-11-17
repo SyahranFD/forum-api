@@ -1,3 +1,4 @@
+const AuthorizationError = require('../../Commons/exceptions/AuthorizationError');
 const NotFoundError = require('../../Commons/exceptions/NotFoundError');
 const AddedReply = require('../../Domains/replies/entities/AddedReply');
 const ThreadRepository = require('../../Domains/threads/ThreadRepository');
@@ -29,10 +30,25 @@ class ReplyRepositoryPostgres extends ThreadRepository {
       values: [id],
     };
 
-    const { rowCount } = await this._pool.query(query);
+    await this._pool.query(query);
+  }
+
+  async verifyReplyOwner(id, owner) {
+    const query = {
+      text: 'SELECT * FROM replies WHERE id = $1',
+      values: [id],
+    };
+
+    const { rows, rowCount } = await this._pool.query(query);
 
     if (!rowCount) {
-      throw new NotFoundError('Sorry, failed to delete reply, id not found');
+      throw new NotFoundError('Reply tidak ditemukan');
+    }
+
+    const reply = rows[0];
+
+    if (reply.owner !== owner) {
+      throw new AuthorizationError('Anda tidak berhak mengakses reply ini');
     }
   }
 }

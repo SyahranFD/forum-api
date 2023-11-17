@@ -7,6 +7,10 @@ class ReplyRepository {
     throw new Error('REPLY_REPOSITORY.METHOD_NOT_IMPLEMENTED');
   }
 
+  async verifyReplyOwner(id, owner) {
+    throw new Error('REPLY_REPOSITORY.METHOD_NOT_IMPLEMENTED');
+  }
+
   async getReplyByThreadId(threadId) {
     throw new Error('REPLY_REPOSITORY.METHOD_NOT_IMPLEMENTED');
   }
