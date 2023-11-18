@@ -32,7 +32,7 @@ describe('GetThreadByIdUseCase', () => {
           username: 'syahran',
           date: '2020-11-11',
           content: 'comment content text',
-          isDeleted: false,
+          isdeleted: false,
           replies: [],
         },
       ),
@@ -42,7 +42,7 @@ describe('GetThreadByIdUseCase', () => {
           username: 'fadhil',
           date: '2020-11-11',
           content: 'comment content text',
-          isDeleted: true,
+          isdeleted: true,
           replies: [],
         },
       ),
@@ -55,16 +55,16 @@ describe('GetThreadByIdUseCase', () => {
           content: 'reply content text',
           date: '2020-11-11',
           username: 'syahran',
-          isDeleted: false,
-          commentId: 'comment-111',
+          isdeleted: false,
+          commentid: 'comment-111',
         },
         {
           id: 'reply-222',
           content: 'reply content text',
           date: '2020-11-11',
           username: 'fadhil',
-          isDeleted: true,
-          commentId: 'comment-222',
+          isdeleted: true,
+          commentid: 'comment-222',
         },
       ),
     ];
@@ -76,7 +76,7 @@ describe('GetThreadByIdUseCase', () => {
 
     /** mocking needed function */
     mockThreadRepository.getThreadById = jest.fn()
-      .mockImplementation(() => Promise.resolve([mockThreadDetail]));
+      .mockImplementation(() => Promise.resolve(mockThreadDetail));
     mockCommentRepository.getCommentByThreadId = jest.fn()
       .mockImplementation(() => Promise.resolve(mockCommentDetail));
     mockReplyRepository.getReplyByThreadId = jest.fn()
@@ -90,7 +90,7 @@ describe('GetThreadByIdUseCase', () => {
     });
 
     // Action
-    const detailThread = await getThreadByIdUseCase.execute(useCaseParams.threadId);
+    const detailThread = await getThreadByIdUseCase.execute(useCaseParams);
 
     // Assert
     expect(detailThread).toEqual({

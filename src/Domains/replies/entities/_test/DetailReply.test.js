@@ -19,8 +19,8 @@ describe('DetailReply entities', () => {
       content: 'string',
       date: 'string',
       username: ['not string'],
-      isDeleted: false,
-      commentId: 'comment-123',
+      isdeleted: false,
+      commentid: 'comment-123',
     };
 
     // Action & Assert
@@ -34,8 +34,8 @@ describe('DetailReply entities', () => {
       content: 'reply content text',
       date: '2020-11-11',
       username: 'rafa',
-      isDeleted: false,
-      commentId: 'comment-123',
+      isdeleted: false,
+      commentid: 'comment-123',
     };
 
     // Action
@@ -47,7 +47,7 @@ describe('DetailReply entities', () => {
     expect(detailReply.content).toEqual(payload.content);
     expect(detailReply.date).toEqual(payload.date);
     expect(detailReply.username).toEqual(payload.username);
-    expect(detailReply.isDeleted).toEqual(payload.isDeleted);
-    expect(detailReply.commentId).toEqual(payload.commentId);
+    expect(detailReply.isdeleted).toEqual(payload.isdeleted);
+    expect(detailReply.commentid).toEqual(payload.commentid);
   });
 });

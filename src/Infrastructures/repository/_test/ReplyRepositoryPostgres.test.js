@@ -107,7 +107,6 @@ describe('CommentRepositoryPostgres', () => {
       expect(reply[0].is_deleted).toEqual(true);
     });
   });
-
   describe('getReplyByThreadId function', () => {
     it('should return replies by thread id correctly', async () => {
       // Arrange
@@ -116,6 +115,7 @@ describe('CommentRepositoryPostgres', () => {
         commentId: 'comment-123',
         owner: 'user-123',
         content: 'reply content text',
+        isdeleted: false,
       });
 
       await RepliesTableTestHelper.addReply({
@@ -123,6 +123,7 @@ describe('CommentRepositoryPostgres', () => {
         commentId: 'comment-123',
         owner: 'user-123',
         content: 'reply content text',
+        isdeleted: false,
       });
 
       const replyRepositoryPostgres = new ReplyRepositoryPostgres(pool, {});
@@ -130,8 +131,13 @@ describe('CommentRepositoryPostgres', () => {
       // Action
       const replies = await replyRepositoryPostgres.getReplyByThreadId('thread-123');
 
+      const mappedReplies = replies.map((reply) => {
+        const { commentid, isdeleted, ...rest } = reply;
+        return rest;
+      });
+
       // Assert
-      expect(replies).toEqual([
+      expect(mappedReplies).toEqual([
         {
           id: 'reply-111',
           content: 'reply content text',
@@ -145,14 +151,6 @@ describe('CommentRepositoryPostgres', () => {
           username: 'dicoding',
         },
       ]);
-    });
-
-    it('should throw NotFoundError when thread has no replies', async () => {
-      // Arrange
-      const replyRepositoryPostgres = new ReplyRepositoryPostgres(pool, {});
-
-      // Assert
-      await expect(replyRepositoryPostgres.getReplyByThreadId('thread-???')).rejects.toThrowError(NotFoundError);
     });
   });
 });

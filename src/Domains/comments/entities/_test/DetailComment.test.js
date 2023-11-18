@@ -19,7 +19,7 @@ describe('DetailComment entities', () => {
       username: 'string',
       date: 'string',
       content: ['not string'],
-      isDeleted: false,
+      isdeleted: false,
       replies: [],
     };
 
@@ -34,7 +34,7 @@ describe('DetailComment entities', () => {
       username: 'rafa',
       date: '2020-11-11',
       content: 'comment content text',
-      isDeleted: false,
+      isdeleted: false,
       replies: [],
     };
 
@@ -48,5 +48,6 @@ describe('DetailComment entities', () => {
     expect(detailComment.date).toEqual(payload.date);
     expect(detailComment.content).toEqual(payload.content);
     expect(detailComment.replies).toEqual(payload.replies);
+    expect(detailComment.isdeleted).toEqual(payload.isdeleted);
   });
 });
