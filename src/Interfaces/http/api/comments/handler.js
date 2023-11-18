@@ -20,7 +20,7 @@ class CommentsHandler {
       content: request.payload.content,
     };
 
-    const addedComment = await addCommentUseCase.execute(useCasePayload);
+    const addedComment = await addCommentUseCase.execute(useCasePayload, request.params);
 
     const response = h.response({
       status: 'success',

@@ -210,7 +210,6 @@ describe('/comments endpoint', () => {
       });
 
       const responseJsonReply = JSON.parse(responseReply.payload);
-      console.log(responseJsonReply);
       const replyId = responseJsonReply.data.addedReply.id;
 
       const response = await server.inject({
