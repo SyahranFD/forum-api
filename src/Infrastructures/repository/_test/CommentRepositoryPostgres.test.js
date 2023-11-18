@@ -55,6 +55,20 @@ describe('CommentRepositoryPostgres', () => {
         content: 'comment content text',
       }));
     });
+    it('should throw NotFoundError when comment is not found', async () => {
+      // Arrange
+      await CommentsTableTestHelper.addComment({
+        id: 'comment-123',
+        threadId: 'thread-123',
+        owner: 'user-123',
+        content: 'comment content text',
+      });
+
+      const commentRepositoryPostgres = new CommentRepositoryPostgres(pool, {});
+
+      // Assert
+      await expect(commentRepositoryPostgres.verifyCommentExist('comment-???')).rejects.toThrowError(NotFoundError);
+    });
   });
 
   describe('deleteCommentById function', () => {

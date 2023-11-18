@@ -19,9 +19,9 @@ class CommentRepositoryPostgres extends CommentRepository {
       values: [id, threadId, owner, content],
     };
 
-    const result = await this._pool.query(query);
+    const { rows } = await this._pool.query(query);
 
-    return new AddedComment({ ...result.rows[0] });
+    return new AddedComment({ ...rows[0] });
   }
 
   async deleteCommentById(id) {
