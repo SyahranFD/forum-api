@@ -138,13 +138,5 @@ describe('CommentRepositoryPostgres', () => {
         },
       ]);
     });
-
-    it('should throw NotFoundError when thread has no comments', async () => {
-      // Arrange
-      const commentRepositoryPostgres = new CommentRepositoryPostgres(pool, {});
-
-      // Assert
-      await expect(commentRepositoryPostgres.getCommentByThreadId('thread-???')).rejects.toThrowError(NotFoundError);
-    });
   });
 });

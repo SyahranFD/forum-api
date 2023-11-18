@@ -1,9 +1,9 @@
 const AuthorizationError = require('../../Commons/exceptions/AuthorizationError');
 const NotFoundError = require('../../Commons/exceptions/NotFoundError');
+const ReplyRepository = require('../../Domains/replies/ReplyRepository');
 const AddedReply = require('../../Domains/replies/entities/AddedReply');
-const ThreadRepository = require('../../Domains/threads/ThreadRepository');
 
-class ReplyRepositoryPostgres extends ThreadRepository {
+class ReplyRepositoryPostgres extends ReplyRepository {
   constructor(pool, idGenerator) {
     super();
     this._pool = pool;
@@ -52,28 +52,20 @@ class ReplyRepositoryPostgres extends ThreadRepository {
     }
   }
 
-  async getReplyByThreadId(threadId) {
+  async getReplyByThreadId(id) {
     const query = {
-      text: `
-        SELECT replies.id, replies.content, replies.date, users.username, replies.is_deleted AS isDeleted
-        FROM replies
-        INNER JOIN comments ON replies.comment_id = comments.id
-        INNER JOIN users ON comments.owner = users.id
-        WHERE comments.thread_id = $1
-        ORDER BY replies.date ASC
-      `,
-      values: [threadId],
+      text: `SELECT replies.id, replies.comment_id AS commentid, replies.content, replies.date, users.username, replies.is_deleted AS isdeleted
+              FROM replies 
+              INNER JOIN comments ON replies.comment_id = comments.id
+              INNER JOIN users ON replies.owner = users.id
+              WHERE comments.thread_id = $1
+              ORDER BY date ASC`,
+      values: [id],
     };
 
-    const { rows, rowCount } = await this._pool.query(query);
+    const { rows } = await this._pool.query(query);
 
-    if (!rowCount) {
-      throw new NotFoundError('Comment tidak ditemukan');
-    }
-
-    const mappedRows = rows.map(({ isdeleted, ...detailReply }) => detailReply);
-
-    return mappedRows;
+    return rows;
   }
 }
 

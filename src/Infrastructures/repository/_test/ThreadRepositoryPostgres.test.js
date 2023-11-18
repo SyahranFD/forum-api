@@ -1,15 +1,20 @@
+const CommentsTableTestHelper = require('../../../../tests/CommentsTableTestHelper');
+const RepliesTableTestHelper = require('../../../../tests/RepliesTableTestHelper');
 const ThreadsTableTestHelper = require('../../../../tests/ThreadsTableTestHelper');
 const UsersTableTestHelper = require('../../../../tests/UsersTableTestHelper');
 const NotFoundError = require('../../../Commons/exceptions/NotFoundError');
 const AddThread = require('../../../Domains/threads/entities/AddThread');
 const AddedThread = require('../../../Domains/threads/entities/AddedThread');
 const pool = require('../../database/postgres/pool');
+const ReplyRepositoryPostgres = require('../ReplyRepositoryPostgres');
 const ThreadRepositoryPostgres = require('../ThreadRepositoryPostgres');
 
 describe('ThreadRepositoryPostgres', () => {
   afterEach(async () => {
     await ThreadsTableTestHelper.cleanTable();
     await UsersTableTestHelper.cleanTable();
+    await RepliesTableTestHelper.cleanTable();
+    await CommentsTableTestHelper.cleanTable();
   });
 
   afterAll(async () => {
@@ -69,7 +74,7 @@ describe('ThreadRepositoryPostgres', () => {
       const thread = await threadRepositoryPostgres.getThreadById('thread-123');
 
       // Assert
-      expect(thread).toEqual([
+      expect(thread).toEqual(
         {
           id: 'thread-123',
           title: 'thread title text',
@@ -77,7 +82,7 @@ describe('ThreadRepositoryPostgres', () => {
           date: expect.anything(),
           username: 'dicoding',
         },
-      ]);
+      );
     });
 
     it('should throw NotFoundError when thread is not found', async () => {

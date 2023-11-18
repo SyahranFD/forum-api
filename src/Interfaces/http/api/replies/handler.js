@@ -19,7 +19,7 @@ class RepliesHandler {
       content: request.payload.content,
     };
 
-    const addedReply = await addReplyUseCase.execute(useCasePayload);
+    const addedReply = await addReplyUseCase.execute(useCasePayload, request.params);
 
     const response = h.response({
       status: 'success',

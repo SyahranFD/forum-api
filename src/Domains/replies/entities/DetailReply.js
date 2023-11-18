@@ -3,21 +3,21 @@ class DetailReply {
     this._verifyPayload(payload);
 
     const {
-      id, content, date, username, isDeleted, commentId,
+      id, content, date, username, isdeleted, commentid,
     } = payload;
 
     this.id = id;
     this.content = content;
     this.date = date;
     this.username = username;
-    this.isDeleted = isDeleted;
-    this.commentId = commentId;
+    this.isdeleted = isdeleted;
+    this.commentid = commentid;
   }
 
   _verifyPayload({
-    id, content, date, username, isDeleted, commentId,
+    id, content, date, username, isdeleted, commentid,
   }) {
-    if (!id || !content || !date || !username || isDeleted === undefined || !commentId) {
+    if (!id || !content || !date || !username || isdeleted === undefined || !commentid) {
       throw new Error('DETAIL_REPLY.NOT_CONTAIN_NEEDED_PROPERTY');
     }
 
@@ -26,8 +26,8 @@ class DetailReply {
           || typeof content !== 'string'
           || typeof date !== 'string'
           || typeof username !== 'string'
-          || typeof isDeleted !== 'boolean'
-          || typeof commentId !== 'string'
+          || typeof isdeleted !== 'boolean'
+          || typeof commentid !== 'string'
     ) {
       throw new Error('DETAIL_REPLY.NOT_MEET_DATA_TYPE_SPECIFICATION');
     }

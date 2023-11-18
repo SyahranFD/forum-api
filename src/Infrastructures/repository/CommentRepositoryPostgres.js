@@ -1,9 +1,9 @@
 const AuthorizationError = require('../../Commons/exceptions/AuthorizationError');
 const NotFoundError = require('../../Commons/exceptions/NotFoundError');
+const CommentRepository = require('../../Domains/comments/CommentRepository');
 const AddedComment = require('../../Domains/comments/entities/AddedComment');
-const ThreadRepository = require('../../Domains/threads/ThreadRepository');
 
-class CommentRepositoryPostgres extends ThreadRepository {
+class CommentRepositoryPostgres extends CommentRepository {
   constructor(pool, idGenerator) {
     super();
     this._pool = pool;
@@ -58,25 +58,18 @@ class CommentRepositoryPostgres extends ThreadRepository {
 
   async getCommentByThreadId(threadId) {
     const query = {
-      text: `
-        SELECT comments.id, users.username, comments.date, comments.content, comments.is_deleted AS isDeleted
-        FROM comments
-        INNER JOIN users ON comments.owner = users.id
-        WHERE comments.thread_id = $1
-        ORDER BY comments.date ASC
-      `,
+      text: `SELECT  comments.id, users.username, comments.date, 
+              CASE WHEN comments.is_deleted = TRUE THEN '**komentar telah dihapus**' else comments.content END AS content
+              FROM comments 
+              INNER JOIN users ON comments.owner = users.id
+              WHERE comments.thread_id = $1
+              ORDER BY comments.date ASC`,
       values: [threadId],
     };
 
-    const { rows, rowCount } = await this._pool.query(query);
+    const { rows } = await this._pool.query(query);
 
-    if (!rowCount) {
-      throw new NotFoundError('Comment tidak ditemukan');
-    }
-
-    const mappedRows = rows.map(({ isdeleted, ...detailComment }) => detailComment);
-
-    return mappedRows;
+    return rows;
   }
 }
 

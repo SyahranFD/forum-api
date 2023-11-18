@@ -3,11 +3,15 @@ const container = require('../../container');
 const createServer = require('../createServer');
 const ThreadsTableTestHelper = require('../../../../tests/ThreadsTableTestHelper');
 const UsersTableTestHelper = require('../../../../tests/UsersTableTestHelper');
+const AuthenticationsTableTestHelper = require('../../../../tests/AuthenticationsTableTestHelper');
+const CommentsTableTestHelper = require('../../../../tests/CommentsTableTestHelper');
+const RepliesTableTestHelper = require('../../../../tests/RepliesTableTestHelper');
 
 describe('/threads endpoint', () => {
   let responseJsonAuthentication;
+  let accessToken;
 
-  beforeAll(async () => {
+  beforeEach(async () => {
     const requestPayloadAuthentication = {
       username: 'rafa',
       password: 'rafapassword',
@@ -34,6 +38,7 @@ describe('/threads endpoint', () => {
     });
 
     responseJsonAuthentication = JSON.parse(responseAuthentication.payload);
+    accessToken = responseJsonAuthentication.data.accessToken;
   });
 
   afterAll(async () => {
@@ -43,6 +48,9 @@ describe('/threads endpoint', () => {
   afterEach(async () => {
     await ThreadsTableTestHelper.cleanTable();
     await UsersTableTestHelper.cleanTable();
+    await AuthenticationsTableTestHelper.cleanTable();
+    await CommentsTableTestHelper.cleanTable();
+    await RepliesTableTestHelper.cleanTable();
   });
 
   describe('when POST /threads', () => {
@@ -61,7 +69,7 @@ describe('/threads endpoint', () => {
         url: '/threads',
         payload: requestPayload,
         headers: {
-          Authorization: `Bearer ${responseJsonAuthentication.data.accessToken}`,
+          Authorization: `Bearer ${accessToken}`,
         },
       });
 
@@ -119,6 +127,37 @@ describe('/threads endpoint', () => {
       expect(response.statusCode).toEqual(400);
       expect(responseJson.status).toEqual('fail');
       expect(responseJson.message).toEqual('tidak dapat membuat thread baru karena tipe data tidak sesuai');
+    });
+  });
+
+  describe('when GET /threads/{threadId}', () => {
+    it('should respond with 200 with thread details and comments', async () => {
+      const server = await createServer(container);
+
+      await UsersTableTestHelper.addUser({ id: 'user-111', username: 'fadhil' });
+      await UsersTableTestHelper.addUser({ id: 'user-222', username: 'syahran' });
+      await ThreadsTableTestHelper.addThread({ id: 'thread-123', owner: 'user-111' });
+      await CommentsTableTestHelper.addComment({ id: 'comment-111', threadId: 'thread-123', owner: 'user-111' });
+      await CommentsTableTestHelper.addComment({ id: 'comment-222', threadId: 'thread-123', owner: 'user-222' });
+      await RepliesTableTestHelper.addReply({ id: 'reply-111', commentid: 'comment-111', owner: 'user-222' });
+      await RepliesTableTestHelper.addReply({ id: 'reply-222', commentid: 'comment-222', owner: 'user-111' });
+
+      const threadId = 'thread-123';
+
+      // action
+      const response = await server.inject({
+        method: 'GET',
+        url: `/threads/${threadId}`,
+      });
+
+      const responseJson = JSON.parse(response.payload);
+      expect(response.statusCode).toEqual(200);
+      expect(responseJson.status).toEqual('success');
+      expect(responseJson.data).toBeDefined();
+      expect(responseJson.data.thread).toBeDefined();
+      expect(responseJson.data.thread.comments).toHaveLength(2);
+      expect(responseJson.data.thread.comments[0].replies).toHaveLength(1);
+      expect(responseJson.data.thread.comments[1].replies).toHaveLength(1);
     });
   });
 });
