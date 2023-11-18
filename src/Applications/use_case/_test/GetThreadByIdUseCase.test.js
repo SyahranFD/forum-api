@@ -55,7 +55,7 @@ describe('GetThreadByIdUseCase', () => {
           content: 'reply content text',
           date: '2020-11-11',
           username: 'syahran',
-          isdeleted: false,
+          isdeleted: true,
           commentid: 'comment-111',
         },
         {
@@ -63,8 +63,8 @@ describe('GetThreadByIdUseCase', () => {
           content: 'reply content text',
           date: '2020-11-11',
           username: 'fadhil',
-          isdeleted: true,
-          commentid: 'comment-222',
+          isdeleted: false,
+          commentid: 'comment-111',
         },
       ),
     ];
@@ -108,7 +108,7 @@ describe('GetThreadByIdUseCase', () => {
           replies: [
             {
               id: 'reply-111',
-              content: 'reply content text',
+              content: '**balasan telah dihapus**',
               date: '2020-11-11',
               username: 'syahran',
             },
@@ -127,5 +127,42 @@ describe('GetThreadByIdUseCase', () => {
     expect(mockThreadRepository.getThreadById).toBeCalledWith(useCaseParams.threadId);
     expect(mockCommentRepository.getCommentByThreadId).toBeCalledWith(useCaseParams.threadId);
     expect(mockReplyRepository.getReplyByThreadId).toBeCalledWith(useCaseParams.threadId);
+  });
+
+  it('should handle the case when the thread is not found', async () => {
+    // Arrange
+    const useCaseParams = {
+      threadId: 'nonexistent-thread-id',
+    };
+
+    /** creating dependency of use case */
+    const mockThreadRepository = new ThreadRepository();
+    const mockCommentRepository = new CommentRepository();
+    const mockReplyRepository = new ReplyRepository();
+
+    /** mocking needed function */
+    mockThreadRepository.getThreadById = jest.fn()
+      .mockImplementation(() => Promise.resolve(null));
+    mockCommentRepository.getCommentByThreadId = jest.fn()
+      .mockImplementation(() => Promise.resolve([]));
+    mockReplyRepository.getReplyByThreadId = jest.fn()
+      .mockImplementation(() => Promise.resolve([]));
+
+    /** creating use case instance */
+    const getThreadByIdUseCase = new GetThreadByIdUseCase({
+      threadRepository: mockThreadRepository,
+      commentRepository: mockCommentRepository,
+      replyRepository: mockReplyRepository,
+    });
+
+    // Action
+    const detailThread = await getThreadByIdUseCase.execute(useCaseParams);
+
+    // Assert
+    expect(detailThread).toBeNull();
+
+    expect(mockThreadRepository.getThreadById).toBeCalledWith(useCaseParams.threadId);
+    expect(mockCommentRepository.getCommentByThreadId).toHaveBeenCalledTimes(0);
+    expect(mockReplyRepository.getReplyByThreadId).toHaveBeenCalledTimes(0);
   });
 });

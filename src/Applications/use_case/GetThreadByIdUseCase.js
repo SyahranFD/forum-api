@@ -7,8 +7,13 @@ class GetThreadByIdUseCase {
 
   async execute(useCaseParams) {
     const { threadId } = useCaseParams;
-    const [thread, comments, replies] = await Promise.all([
-      this._threadRepository.getThreadById(threadId),
+    const thread = await this._threadRepository.getThreadById(threadId);
+
+    if (!thread) {
+      return null;
+    }
+
+    const [comments, replies] = await Promise.all([
       this._commentRepository.getCommentByThreadId(threadId),
       this._replyRepository.getReplyByThreadId(threadId),
     ]);
