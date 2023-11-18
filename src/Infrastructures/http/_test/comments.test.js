@@ -97,30 +97,30 @@ describe('/comments endpoint', () => {
       expect(responseJson.data.addedComment.id).toBeDefined();
     });
 
-    // it('should response 404 when thread not found', async () => {
-    //   // Arrange
-    //   const requestPayload = {
-    //     content: 'comment content text',
-    //   };
+    it('should response 404 when thread not found', async () => {
+      // Arrange
+      const requestPayload = {
+        content: 'comment content text',
+      };
 
-    //   const server = await createServer(container);
+      const server = await createServer(container);
 
-    //   // Action
-    //   const response = await server.inject({
-    //     method: 'POST',
-    //     url: '/threads/???/comments',
-    //     payload: requestPayload,
-    //     headers: {
-    //       Authorization: `Bearer ${accessToken}`,
-    //     },
-    //   });
+      // Action
+      const response = await server.inject({
+        method: 'POST',
+        url: '/threads/xxx/comments',
+        payload: requestPayload,
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
 
-    //   // Assert
-    //   const responseJson = JSON.parse(response.payload);
-    //   expect(response.statusCode).toEqual(404);
-    //   expect(responseJson.status).toEqual('fail');
-    //   expect(responseJson.message).toEqual('thread tidak ditemukan');
-    // });
+      // Assert
+      const responseJson = JSON.parse(response.payload);
+      expect(response.statusCode).toEqual(404);
+      expect(responseJson.status).toEqual('fail');
+      expect(responseJson.message).toEqual('thread tidak ditemukan');
+    });
 
     it('should response 400 when request payload not contain needed property', async () => {
       // Arrange
@@ -202,6 +202,42 @@ describe('/comments endpoint', () => {
       const responseJson = JSON.parse(response.payload);
       expect(response.statusCode).toEqual(200);
       expect(responseJson.status).toEqual('success');
+    });
+
+    it('should response 404 when comment not found', async () => {
+      // Arrange
+      const requestPayloadComment = {
+        content: 'comment content text',
+      };
+
+      const server = await createServer(container);
+
+      // Action
+      const responseComment = await server.inject({
+        method: 'POST',
+        url: `/threads/${threadId}/comments`,
+        payload: requestPayloadComment,
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      const responseJsonComment = JSON.parse(responseComment.payload);
+      const commentId = responseJsonComment.data.addedComment.id;
+
+      const response = await server.inject({
+        method: 'DELETE',
+        url: `/threads/${threadId}/comments/xxx`,
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      // Assert
+      const responseJson = JSON.parse(response.payload);
+      expect(response.statusCode).toEqual(404);
+      expect(responseJson.status).toEqual('fail');
+      expect(responseJson.message).toEqual('Comment tidak ditemukan');
     });
     it('should response 403 when user is not the owner of comment', async () => {
       // Arrange
