@@ -11,7 +11,7 @@ class DetailComment {
     this.date = date;
     this.content = content;
     this.isdeleted = isdeleted;
-    this.replies = replies || [];
+    this.replies = replies;
   }
 
   _verifyPayload({
