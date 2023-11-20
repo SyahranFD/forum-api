@@ -27,7 +27,7 @@ class DetailComment {
           || typeof date !== 'string'
           || typeof content !== 'string'
           || typeof isdeleted !== 'boolean'
-          || !(Array.isArray(replies))
+          || !Array.isArray(replies)
     ) {
       throw new Error('DETAIL_COMMENT.NOT_MEET_DATA_TYPE_SPECIFICATION');
     }

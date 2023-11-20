@@ -62,6 +62,9 @@ describe('AddReplyUseCase', () => {
       content: 'reply content text',
     }));
 
+    expect(mockThreadRepository.verifyThreadExist).toBeCalledWith(useCaseParams.threadId);
+    expect(mockCommentRepository.verifyCommentExist).toBeCalledWith(useCaseParams.commentId);
+
     expect(mockReplyRepository.addReply).toBeCalledWith(new AddReply({
       commentId: useCaseParams.commentId,
       owner: useCaseAuthCredential.owner,
