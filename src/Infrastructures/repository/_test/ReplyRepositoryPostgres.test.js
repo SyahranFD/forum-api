@@ -116,6 +116,7 @@ describe('CommentRepositoryPostgres', () => {
         owner: 'user-123',
         content: 'reply content text',
         isdeleted: false,
+        date: '2022-11-11',
       });
 
       await RepliesTableTestHelper.addReply({
@@ -124,6 +125,7 @@ describe('CommentRepositoryPostgres', () => {
         owner: 'user-123',
         content: 'reply content text',
         isdeleted: false,
+        date: '2022-11-12',
       });
 
       const replyRepositoryPostgres = new ReplyRepositoryPostgres(pool, {});

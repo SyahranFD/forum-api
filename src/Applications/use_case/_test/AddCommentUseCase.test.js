@@ -56,6 +56,8 @@ describe('AddCommentUseCase', () => {
       content: 'comment content text',
     }));
 
+    expect(mockThreadRepository.verifyThreadExist).toBeCalledWith(useCaseParams.threadId);
+
     expect(mockCommentRepository.addComment).toBeCalledWith(new AddComment({
       threadId: useCaseParams.threadId,
       owner: useCaseAuthCredential.owner,

@@ -55,15 +55,17 @@ describe('GetThreadByIdUseCase', () => {
           content: 'reply content text',
           date: '2020-11-11',
           username: 'syahran',
-          isdeleted: true,
+          isdeleted: false,
           commentid: 'comment-111',
         },
+      ),
+      new DetailReply(
         {
           id: 'reply-222',
           content: 'reply content text',
-          date: '2020-11-11',
+          date: '2020-11-12',
           username: 'fadhil',
-          isdeleted: false,
+          isdeleted: true,
           commentid: 'comment-111',
         },
       ),
@@ -108,9 +110,15 @@ describe('GetThreadByIdUseCase', () => {
           replies: [
             {
               id: 'reply-111',
-              content: '**balasan telah dihapus**',
+              content: 'reply content text',
               date: '2020-11-11',
               username: 'syahran',
+            },
+            {
+              id: 'reply-222',
+              content: '**balasan telah dihapus**',
+              date: '2020-11-12',
+              username: 'fadhil',
             },
           ],
         },

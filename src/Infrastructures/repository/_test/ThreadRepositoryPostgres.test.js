@@ -10,6 +10,15 @@ const ReplyRepositoryPostgres = require('../ReplyRepositoryPostgres');
 const ThreadRepositoryPostgres = require('../ThreadRepositoryPostgres');
 
 describe('ThreadRepositoryPostgres', () => {
+  beforeEach(async () => {
+    await UsersTableTestHelper.addUser({
+      id: 'user-123',
+      username: 'dicoding',
+      password: 'secret',
+      fullname: 'Dicoding Indonesia',
+    });
+  });
+
   afterEach(async () => {
     await ThreadsTableTestHelper.cleanTable();
     await UsersTableTestHelper.cleanTable();
@@ -24,13 +33,6 @@ describe('ThreadRepositoryPostgres', () => {
   describe('addThread function', () => {
     it('should return added thread correctly', async () => {
       // Arrange
-      await UsersTableTestHelper.addUser({
-        id: 'user-123',
-        username: 'dicoding',
-        password: 'secret',
-        fullname: 'Dicoding Indonesia',
-      });
-
       const addThread = new AddThread({
         owner: 'user-123',
         title: 'thread title text',
@@ -54,18 +56,12 @@ describe('ThreadRepositoryPostgres', () => {
   describe('getThreadById function', () => {
     it('should return thread by id correctly', async () => {
       // Arrange
-      await UsersTableTestHelper.addUser({
-        id: 'user-123',
-        username: 'dicoding',
-        password: 'secret',
-        fullname: 'Dicoding Indonesia',
-      });
-
       await ThreadsTableTestHelper.addThread({
         id: 'thread-123',
         owner: 'user-123',
         title: 'thread title text',
         body: 'thread body text',
+        comments: [],
       });
 
       const threadRepositoryPostgres = new ThreadRepositoryPostgres(pool, jest.fn());
@@ -81,6 +77,7 @@ describe('ThreadRepositoryPostgres', () => {
           body: 'thread body text',
           date: expect.anything(),
           username: 'dicoding',
+          comments: [],
         },
       );
     });
@@ -91,6 +88,30 @@ describe('ThreadRepositoryPostgres', () => {
 
       // Action & Assert
       await expect(threadRepositoryPostgres.getThreadById('thread-???')).rejects.toThrowError(NotFoundError);
+    });
+  });
+  describe('verifyThreadExist function', () => {
+    it('should not throw NotFoundError when thread exists', async () => {
+      // Arrange
+      await ThreadsTableTestHelper.addThread({
+        id: 'thread-123',
+        owner: 'user-123',
+        title: 'thread title text',
+        body: 'thread body text',
+      });
+
+      const threadRepositoryPostgres = new ThreadRepositoryPostgres(pool, jest.fn());
+
+      // Action & Assert
+      await expect(threadRepositoryPostgres.verifyThreadExist('thread-123')).resolves.not.toThrowError(NotFoundError);
+    });
+
+    it('should throw NotFoundError when thread does not exist', async () => {
+      // Arrange
+      const threadRepositoryPostgres = new ThreadRepositoryPostgres(pool, jest.fn());
+
+      // Action & Assert
+      await expect(threadRepositoryPostgres.verifyThreadExist('nonexistent-thread')).rejects.toThrowError(NotFoundError);
     });
   });
 });
