@@ -78,7 +78,7 @@ describe('CommentRepositoryPostgres', () => {
       const commentRepositoryPostgres = new CommentRepositoryPostgres(pool, {});
 
       // Assert
-      await expect(commentRepositoryPostgres.deleteCommentById('comment-???')).rejects.toThrowError(NotFoundError);
+      await expect(commentRepositoryPostgres.verifyCommentExist('comment-???', 'user-222')).rejects.toThrowError(NotFoundError);
     });
 
     it('should throw AuthorizationError when reply is not owned by user', async () => {

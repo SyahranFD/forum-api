@@ -18,7 +18,7 @@ class GetThreadByIdUseCase {
       this._replyRepository.getReplyByThreadId(threadId),
     ]);
 
-    const mapReply = (comment) => {
+    const mappedReplies = (comment) => {
       const filteredReplies = replies.filter((reply) => reply.commentid === comment.id);
       return filteredReplies.map((reply) => ({
         id: reply.id,
@@ -28,17 +28,17 @@ class GetThreadByIdUseCase {
       }));
     };
 
-    const processedComments = comments.map((comment) => ({
+    const mappedComments = comments.map((comment) => ({
       id: comment.id,
       username: comment.username,
       date: comment.date,
       content: comment.isdeleted ? '**komentar telah dihapus**' : comment.content,
-      replies: mapReply(comment),
+      replies: mappedReplies(comment),
     }));
 
     return {
       ...thread,
-      comments: processedComments,
+      comments: mappedComments,
     };
   }
 }

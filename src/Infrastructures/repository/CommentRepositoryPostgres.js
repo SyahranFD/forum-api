@@ -32,10 +32,19 @@ class CommentRepositoryPostgres extends CommentRepository {
       values: [id],
     };
 
+    await this._pool.query(query);
+  }
+
+  async verifyCommentExist(id) {
+    const query = {
+      text: 'SELECT id FROM comments WHERE id = $1',
+      values: [id],
+    };
+
     const { rowCount } = await this._pool.query(query);
 
     if (!rowCount) {
-      throw new NotFoundError('sorry failed to delete comment, id not found');
+      throw new NotFoundError('Comment tidak ditemukan');
     }
   }
 
@@ -45,11 +54,7 @@ class CommentRepositoryPostgres extends CommentRepository {
       values: [id],
     };
 
-    const { rows, rowCount } = await this._pool.query(query);
-
-    if (!rowCount) {
-      throw new NotFoundError('Comment tidak ditemukan');
-    }
+    const { rows } = await this._pool.query(query);
 
     const comment = rows[0];
 
@@ -77,21 +82,6 @@ class CommentRepositoryPostgres extends CommentRepository {
     }));
 
     return mappedComments;
-  }
-
-  async verifyCommentExist(id) {
-    const query = {
-      text: 'SELECT id FROM comments WHERE id = $1',
-      values: [id],
-    };
-
-    const { rowCount } = await this._pool.query(query);
-
-    if (!rowCount) {
-      throw new NotFoundError('Comment tidak ditemukan');
-    }
-
-    return rowCount;
   }
 }
 

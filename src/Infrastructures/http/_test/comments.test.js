@@ -119,7 +119,7 @@ describe('/comments endpoint', () => {
       const responseJson = JSON.parse(response.payload);
       expect(response.statusCode).toEqual(404);
       expect(responseJson.status).toEqual('fail');
-      expect(responseJson.message).toEqual('thread tidak ditemukan');
+      expect(responseJson.message).toEqual('Thread tidak ditemukan');
     });
 
     it('should response 400 when request payload not contain needed property', async () => {
@@ -221,9 +221,6 @@ describe('/comments endpoint', () => {
           Authorization: `Bearer ${accessToken}`,
         },
       });
-
-      const responseJsonComment = JSON.parse(responseComment.payload);
-      const commentId = responseJsonComment.data.addedComment.id;
 
       const response = await server.inject({
         method: 'DELETE',

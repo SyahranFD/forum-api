@@ -70,7 +70,7 @@ describe('CommentRepositoryPostgres', () => {
       const replyRepositoryPostgres = new ReplyRepositoryPostgres(pool, {});
 
       // Assert
-      await expect(replyRepositoryPostgres.verifyReplyOwner('reply-???', 'user-123')).rejects.toThrowError(NotFoundError);
+      await expect(replyRepositoryPostgres.verifyReplyExist('reply-???', 'user-123')).rejects.toThrowError(NotFoundError);
     });
 
     it('should throw AuthorizationError when reply is not owned by user', async () => {
