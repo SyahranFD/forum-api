@@ -24,6 +24,19 @@ class ThreadRepositoryPostgres extends ThreadRepository {
     return new AddedThread({ ...rows[0] });
   }
 
+  async verifyThreadExist(id) {
+    const query = {
+      text: 'SELECT id FROM threads WHERE id = $1',
+      values: [id],
+    };
+
+    const { rowCount } = await this._pool.query(query);
+
+    if (!rowCount) {
+      throw new NotFoundError('Thread tidak ditemukan');
+    }
+  }
+
   async getThreadById(id) {
     const query = {
       text: `
@@ -41,28 +54,7 @@ class ThreadRepositoryPostgres extends ThreadRepository {
       throw new NotFoundError('Thread tidak ditemukan');
     }
 
-    const mappedThread = new DetailThread({
-      ...rows[0],
-      date: rows[0].date.toISOString(),
-      comments: [],
-    });
-
-    return mappedThread;
-  }
-
-  async verifyThreadExist(id) {
-    const query = {
-      text: 'SELECT id FROM threads WHERE id = $1',
-      values: [id],
-    };
-
-    const { rowCount } = await this._pool.query(query);
-
-    if (!rowCount) {
-      throw new NotFoundError('thread tidak ditemukan');
-    }
-
-    return rowCount;
+    return rows[0];
   }
 }
 

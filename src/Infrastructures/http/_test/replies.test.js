@@ -140,7 +140,7 @@ describe('/comments endpoint', () => {
       const responseJson = JSON.parse(response.payload);
       expect(response.statusCode).toEqual(404);
       expect(responseJson.status).toEqual('fail');
-      expect(responseJson.message).toEqual('thread tidak ditemukan');
+      expect(responseJson.message).toEqual('Thread tidak ditemukan');
     });
 
     it('should response 404 when comment not found', async () => {

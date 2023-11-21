@@ -4,6 +4,7 @@ class DeleteReplyUseCase {
   }
 
   async execute(useCasePayload) {
+    await this._replyRepository.verifyReplyExist(useCasePayload.id);
     await this._replyRepository.verifyReplyOwner(useCasePayload.id, useCasePayload.owner);
     await this._replyRepository.deleteReplyById(useCasePayload.id);
   }

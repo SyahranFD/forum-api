@@ -61,7 +61,6 @@ describe('ThreadRepositoryPostgres', () => {
         owner: 'user-123',
         title: 'thread title text',
         body: 'thread body text',
-        comments: [],
       });
 
       const threadRepositoryPostgres = new ThreadRepositoryPostgres(pool, jest.fn());
@@ -77,7 +76,6 @@ describe('ThreadRepositoryPostgres', () => {
           body: 'thread body text',
           date: expect.anything(),
           username: 'dicoding',
-          comments: [],
         },
       );
     });
