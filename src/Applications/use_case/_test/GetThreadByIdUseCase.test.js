@@ -1,9 +1,6 @@
 const CommentRepository = require('../../../Domains/comments/CommentRepository');
-const DetailComment = require('../../../Domains/comments/entities/DetailComment');
 const ReplyRepository = require('../../../Domains/replies/ReplyRepository');
-const DetailReply = require('../../../Domains/replies/entities/DetailReply');
 const ThreadRepository = require('../../../Domains/threads/ThreadRepository');
-const DetailThread = require('../../../Domains/threads/entities/DetailThread');
 const GetThreadByIdUseCase = require('../GetThreadByIdUseCase');
 
 describe('GetThreadByIdUseCase', () => {
@@ -16,59 +13,52 @@ describe('GetThreadByIdUseCase', () => {
       threadId: 'thread-123',
     };
 
-    const mockThreadDetail = new DetailThread({
+    const mockThreadDetail = {
       id: useCaseParams.threadId,
       title: 'thread title text',
       body: 'thread title body',
       date: '2020-11-11',
       username: 'rafa',
       comments: [],
-    });
+    };
 
     const mockCommentDetail = [
-      new DetailComment(
-        {
-          id: 'comment-111',
-          username: 'syahran',
-          date: '2020-11-11',
-          content: 'comment content text',
-          isdeleted: false,
-          replies: [],
-        },
-      ),
-      new DetailComment(
-        {
-          id: 'comment-222',
-          username: 'fadhil',
-          date: '2020-11-11',
-          content: 'comment content text',
-          isdeleted: true,
-          replies: [],
-        },
-      ),
+      {
+        id: 'comment-111',
+        username: 'syahran',
+        date: '2020-11-11',
+        content: 'comment content text',
+        isdeleted: false,
+        replies: [],
+      },
+
+      {
+        id: 'comment-222',
+        username: 'fadhil',
+        date: '2020-11-11',
+        content: 'comment content text',
+        isdeleted: true,
+        replies: [],
+      },
     ];
 
     const mockReplyDetail = [
-      new DetailReply(
-        {
-          id: 'reply-111',
-          content: 'reply content text',
-          date: '2020-11-11',
-          username: 'syahran',
-          isdeleted: false,
-          commentid: 'comment-111',
-        },
-      ),
-      new DetailReply(
-        {
-          id: 'reply-222',
-          content: 'reply content text',
-          date: '2020-11-12',
-          username: 'fadhil',
-          isdeleted: true,
-          commentid: 'comment-111',
-        },
-      ),
+      {
+        id: 'reply-111',
+        content: 'reply content text',
+        date: '2020-11-11',
+        username: 'syahran',
+        isdeleted: false,
+        commentid: 'comment-111',
+      },
+      {
+        id: 'reply-222',
+        content: 'reply content text',
+        date: '2020-11-12',
+        username: 'fadhil',
+        isdeleted: true,
+        commentid: 'comment-111',
+      },
     ];
 
     /** creating dependency of use case */

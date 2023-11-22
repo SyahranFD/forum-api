@@ -5,7 +5,6 @@ const AuthorizationError = require('../../../Commons/exceptions/AuthorizationErr
 const NotFoundError = require('../../../Commons/exceptions/NotFoundError');
 const AddComment = require('../../../Domains/comments/entities/AddComment');
 const AddedComment = require('../../../Domains/comments/entities/AddedComment');
-const DetailComment = require('../../../Domains/comments/entities/DetailComment');
 const pool = require('../../database/postgres/pool');
 const CommentRepositoryPostgres = require('../CommentRepositoryPostgres');
 
@@ -126,7 +125,6 @@ describe('CommentRepositoryPostgres', () => {
         content: 'comment content text',
         isdeleted: false,
         date: '2022-11-11',
-        replies: [],
       });
       await CommentsTableTestHelper.addComment({
         id: 'comment-222',
@@ -135,7 +133,6 @@ describe('CommentRepositoryPostgres', () => {
         content: 'comment content text',
         isdeleted: false,
         date: '2022-11-12',
-        replies: [],
       });
 
       const commentRepositoryPostgres = new CommentRepositoryPostgres(pool, {});
@@ -155,14 +152,12 @@ describe('CommentRepositoryPostgres', () => {
           username: 'dicoding',
           date: expect.anything(),
           content: 'comment content text',
-          replies: [],
         },
         {
           id: 'comment-222',
           username: 'dicoding',
           date: expect.anything(),
           content: 'comment content text',
-          replies: [],
         },
       ]);
     });
