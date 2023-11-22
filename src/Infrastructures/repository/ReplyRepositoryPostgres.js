@@ -2,7 +2,6 @@ const AuthorizationError = require('../../Commons/exceptions/AuthorizationError'
 const NotFoundError = require('../../Commons/exceptions/NotFoundError');
 const ReplyRepository = require('../../Domains/replies/ReplyRepository');
 const AddedReply = require('../../Domains/replies/entities/AddedReply');
-const DetailReply = require('../../Domains/replies/entities/DetailReply');
 
 class ReplyRepositoryPostgres extends ReplyRepository {
   constructor(pool, idGenerator) {
@@ -75,12 +74,7 @@ class ReplyRepositoryPostgres extends ReplyRepository {
 
     const { rows } = await this._pool.query(query);
 
-    const mappedReplies = rows.map((reply) => new DetailReply({
-      ...reply,
-      date: reply.date.toISOString(),
-    }));
-
-    return mappedReplies;
+    return rows;
   }
 }
 
