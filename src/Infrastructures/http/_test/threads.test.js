@@ -6,6 +6,7 @@ const UsersTableTestHelper = require('../../../../tests/UsersTableTestHelper');
 const AuthenticationsTableTestHelper = require('../../../../tests/AuthenticationsTableTestHelper');
 const CommentsTableTestHelper = require('../../../../tests/CommentsTableTestHelper');
 const RepliesTableTestHelper = require('../../../../tests/RepliesTableTestHelper');
+const LikesTableTestHelper = require('../../../../tests/LikesTableTestHelper');
 
 describe('/threads endpoint', () => {
   let responseJsonAuthentication;
@@ -51,6 +52,7 @@ describe('/threads endpoint', () => {
     await AuthenticationsTableTestHelper.cleanTable();
     await CommentsTableTestHelper.cleanTable();
     await RepliesTableTestHelper.cleanTable();
+    await LikesTableTestHelper.cleanTable();
   });
 
   describe('when POST /threads', () => {
@@ -141,6 +143,8 @@ describe('/threads endpoint', () => {
       await CommentsTableTestHelper.addComment({ id: 'comment-222', threadId: 'thread-123', owner: 'user-222' });
       await RepliesTableTestHelper.addReply({ id: 'reply-111', commentid: 'comment-111', owner: 'user-222' });
       await RepliesTableTestHelper.addReply({ id: 'reply-222', commentid: 'comment-222', owner: 'user-111' });
+      await LikesTableTestHelper.addLike({ id: 'like-111', commentId: 'comment-111', owner: 'user-111' });
+      await LikesTableTestHelper.addLike({ id: 'like-222', commentId: 'comment-111', owner: 'user-222' });
 
       const threadId = 'thread-123';
 
@@ -158,6 +162,7 @@ describe('/threads endpoint', () => {
       expect(responseJson.data.thread.comments).toHaveLength(2);
       expect(responseJson.data.thread.comments[0].replies).toHaveLength(1);
       expect(responseJson.data.thread.comments[1].replies).toHaveLength(1);
+      expect(responseJson.data.thread.comments[0].likeCount).toEqual(1);
     });
   });
 });
