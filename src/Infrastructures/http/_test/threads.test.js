@@ -162,7 +162,7 @@ describe('/threads endpoint', () => {
       expect(responseJson.data.thread.comments).toHaveLength(2);
       expect(responseJson.data.thread.comments[0].replies).toHaveLength(1);
       expect(responseJson.data.thread.comments[1].replies).toHaveLength(1);
-      expect(responseJson.data.thread.comments[0].likeCount).toEqual(1);
+      expect(responseJson.data.thread.comments[0].likeCount).toEqual(2);
     });
   });
 });
